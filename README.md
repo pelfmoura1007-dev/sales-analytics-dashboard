@@ -25,3 +25,4 @@ sales-analytics-dashboard/
 ├── app.py             # Arquivo principal da aplicação
 ├── requirements.txt   # Dependências e bibliotecas do projeto
 └── README.md          # Documentação do projeto
+
