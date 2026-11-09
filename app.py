@@ -1,4 +1,3 @@
-
 import streamlit as st
 import plotly.express as px
 
@@ -65,67 +64,185 @@ if "periodo" not in st.session_state:
     st.session_state["periodo"] = (data_minima, data_maxima)
 
 
-# ===== ESTILO VISUAL =====
+# ===== ESTILO VISUAL (DESIGN SYSTEM COM VARIÁVEIS CSS) =====
 
 st.markdown("""
 <style>
-    [data-testid="stAppViewContainer"],
-    [data-testid="stMain"] {
-        background-color: #0F172A;
-        color: #F8FAFC;
-    }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-    [data-testid="stHeader"] {
-        background-color: #0F172A;
-    }
+:root {
+    --background: #0F172A;
+    --surface: #1E293B;
+    --surface-hover: #263449;
+    --border: #334155;
+    --primary: #38BDF8;
+    --text: #F1F5F9;
+    --muted: #94A3B8;
+    --success: #22C55E;
+}
 
-    [data-testid="stMain"] h1,
-    [data-testid="stMain"] h2,
-    [data-testid="stMain"] h3,
-    [data-testid="stMain"] p,
-    [data-testid="stMain"] label {
-        color: #F8FAFC;
-    }
+html, body, [class*="css"] {
+    font-family: 'Inter', sans-serif;
+}
 
-    [data-testid="stSidebar"] {
-        background-color: #111827;
-    }
+.stApp {
+    background: var(--background);
+    color: var(--text);
+}
 
-    [data-testid="stSidebar"] h1,
-    [data-testid="stSidebar"] h2,
-    [data-testid="stSidebar"] p,
-    [data-testid="stSidebar"] label {
-        color: #F8FAFC;
-    }
+[data-testid="stHeader"] {
+    background: transparent;
+}
 
-    [data-testid="stMetric"] {
-        background-color: #1E293B;
-        border: 1px solid #334155;
-        padding: 20px;
-        border-radius: 12px;
-    }
+[data-testid="stSidebar"] {
+    background: #111C30;
+    border-right: 1px solid var(--border);
+}
 
-    [data-testid="stMetricLabel"] p {
-        color: #CBD5E1 !important;
-    }
+[data-testid="stSidebar"] * {
+    color: var(--text);
+}
 
-    [data-testid="stMetricValue"] {
-        color: #FFFFFF !important;
-    }
+h1, h2, h3 {
+    color: var(--text) !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.5px;
+}
 
-    [data-testid="stPlotlyChart"] {
-        background-color: #FFFFFF;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 8px;
-    }
+p, label {
+    color: var(--muted);
+}
 
-    [data-testid="stDataFrame"] {
-        background-color: #FFFFFF;
-        border-radius: 10px;
+/* Cartões (Metrics) */
+div[data-testid="stMetric"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 22px;
+    border-radius: 14px;
+    transition: all 0.25s ease;
+}
+
+div[data-testid="stMetric"]:hover {
+    background: var(--surface-hover);
+    transform: translateY(-3px);
+    border-color: var(--primary);
+}
+
+[data-testid="stMetricLabel"] {
+    color: var(--muted) !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+[data-testid="stMetricValue"] {
+    color: var(--text) !important;
+    font-size: 29px !important;
+    font-weight: 800 !important;
+}
+
+/* Container dos Gráficos */
+[data-testid="stPlotlyChart"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    transition: all 0.25s ease;
+}
+
+[data-testid="stPlotlyChart"]:hover {
+    border-color: var(--primary);
+}
+
+/* Filtros */
+div[data-baseweb="select"] > div,
+div[data-baseweb="input"] > div {
+    background: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 9px !important;
+}
+
+div[data-baseweb="tag"] {
+    background: #334155 !important;
+    border-radius: 6px !important;
+}
+
+div[data-baseweb="tag"] span {
+    color: var(--text) !important;
+}
+
+button[kind="secondary"] {
+    border-radius: 9px;
+    border: 1px solid var(--border);
+}
+
+/* Tabela */
+[data-testid="stDataFrame"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Botões */
+.stButton > button {
+    border-radius: 9px;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.stButton > button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Animação */
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main .block-container {
+    animation: aparecer 0.5s ease;
+    padding-top: 2rem;
+}
 </style>
 """, unsafe_allow_html=True)
+
+
+# ===== CONFIGURAÇÃO GLOBAL DE TEMA DOS GRÁFICOS =====
+
+layout_dark = {
+    "paper_bgcolor": "#1E293B",
+    "plot_bgcolor": "#1E293B",
+    "font": {
+        "color": "#F1F5F9",
+        "family": "Inter"
+    },
+    "margin": dict(l=25, r=25, t=50, b=35),
+    "xaxis": {
+        "showgrid": False,
+        "color": "#94A3B8",
+        "zeroline": False
+    },
+    "yaxis": {
+        "gridcolor": "#334155",
+        "color": "#94A3B8",
+        "zeroline": False,
+        "tickprefix": "R$ ",
+        "separatethousands": True
+    },
+    "hoverlabel": {
+        "bgcolor": "#0F172A",
+        "font_color": "#F1F5F9",
+        "bordercolor": "#38BDF8"
+    }
+}
 
 
 # ===== CABEÇALHO =====
@@ -200,7 +317,7 @@ vendas_filtradas = vendas[
 ].copy()
 
 
-# ===== INDICADORES =====
+# ===== INDICADORES (KPIs) =====
 
 faturamento_total = vendas_filtradas["faturamento"].sum()
 quantidade_vendas = len(vendas_filtradas)
@@ -225,22 +342,22 @@ def formatar_reais(valor):
 col1, col2, col3, col4 = st.columns(4)
 
 col1.metric(
-    "Faturamento total",
+    "💰 Faturamento total",
     formatar_reais(faturamento_total)
 )
 
 col2.metric(
-    "Registros de vendas",
+    "🛒 Vendas registradas",
     f"{quantidade_vendas:,}".replace(",", ".")
 )
 
 col3.metric(
-    "Unidades vendidas",
+    "📦 Unidades vendidas",
     f"{unidades_vendidas:,}".replace(",", ".")
 )
 
 col4.metric(
-    "Ticket médio por registro",
+    "📊 Ticket médio",
     formatar_reais(ticket_medio)
 )
 
@@ -269,68 +386,26 @@ else:
             .sort_values("faturamento", ascending=False)
         )
 
-        grafico_categoria = px.bar(
+        fig_bar = px.bar(
             faturamento_categoria,
             x="categoria",
             y="faturamento",
             title="Faturamento por categoria",
-            labels={
-                "categoria": "Categoria",
-                "faturamento": "Faturamento (R$)"
-            },
-            text="faturamento",
-            color="categoria",
-            color_discrete_sequence=[
-                "#2563EB", "#0D9488", "#F59E0B"
-            ]
+            color_discrete_sequence=["#38BDF8"]
         )
 
-        grafico_categoria.update_traces(
+        fig_bar.update_traces(
+            marker_line_width=0,
             texttemplate="R$ %{y:,.0f}",
             textposition="outside",
-            textfont=dict(color="#0F172A", size=11),
+            textfont=dict(color="#F1F5F9", size=11),
             cliponaxis=False,
-            hovertemplate=(
-                "<b>%{x}</b><br>"
-                "Faturamento: R$ %{y:,.2f}"
-                "<extra></extra>"
-            )
+            hovertemplate="<b>%{x}</b><br>Faturamento: R$ %{y:,.2f}<extra></extra>"
         )
 
-        grafico_categoria.update_layout(
-            height=420,
-            showlegend=False,
-            font=dict(color="#0F172A", size=12),
-            title=dict(font=dict(color="#0F172A", size=18)),
-            plot_bgcolor="#FFFFFF",
-            paper_bgcolor="#FFFFFF",
-            margin=dict(l=20, r=35, t=65, b=35),
-            xaxis=dict(
-                title="Categoria",
-                tickfont=dict(color="#0F172A"),
-                title_font=dict(color="#0F172A"),
-                showgrid=False
-            ),
-            yaxis=dict(
-                title="Faturamento (R$)",
-                tickfont=dict(color="#334155"),
-                title_font=dict(color="#0F172A"),
-                tickprefix="R$ ",
-                separatethousands=True,
-                gridcolor="#E2E8F0",
-                rangemode="tozero"
-            ),
-            hoverlabel=dict(
-                bgcolor="#FFFFFF",
-                font_color="#0F172A"
-            )
-        )
+        fig_bar.update_layout(**layout_dark)
 
-        st.plotly_chart(
-            grafico_categoria,
-            use_container_width=True,
-            key="grafico_categoria"
-        )
+        st.plotly_chart(fig_bar, use_container_width=True, key="fig_bar")
 
     # ===== EVOLUÇÃO MENSAL =====
 
@@ -341,87 +416,58 @@ else:
             .astype(str)
         )
 
-        faturamento_mensal = (
+        vendas_por_mes = (
             vendas_filtradas
             .groupby("mes", as_index=False)["faturamento"]
             .sum()
             .sort_values("mes")
         )
 
-        grafico_mensal = px.line(
-            faturamento_mensal,
+        fig_linha = px.line(
+            vendas_por_mes,
             x="mes",
             y="faturamento",
             title="Evolução mensal do faturamento",
-            labels={
-                "mes": "Mês",
-                "faturamento": "Faturamento (R$)"
-            },
-            markers=True
+            markers=True,
+            color_discrete_sequence=["#38BDF8"]
         )
 
-        grafico_mensal.update_traces(
-            line=dict(color="#2563EB", width=3),
-            marker=dict(
-                size=9,
-                color="#0D9488",
-                line=dict(color="#FFFFFF", width=2)
-            ),
-            hovertemplate=(
-                "<b>Mês: %{x}</b><br>"
-                "Faturamento: R$ %{y:,.2f}"
-                "<extra></extra>"
-            )
+        fig_linha.update_traces(
+            line=dict(width=3),
+            marker=dict(size=8, color="#7DD3FC", line=dict(color="#1E293B", width=2)),
+            hovertemplate="Mês: %{x}<br>Faturamento: R$ %{y:,.2f}<extra></extra>"
         )
 
-        grafico_mensal.update_layout(
-            height=420,
-            font=dict(color="#0F172A", size=12),
-            title=dict(font=dict(color="#0F172A", size=18)),
-            plot_bgcolor="#FFFFFF",
-            paper_bgcolor="#FFFFFF",
-            margin=dict(l=20, r=25, t=65, b=35),
-            xaxis=dict(
-                title="Mês",
-                tickfont=dict(color="#0F172A"),
-                title_font=dict(color="#0F172A"),
-                showgrid=False
-            ),
-            yaxis=dict(
-                title="Faturamento (R$)",
-                tickfont=dict(color="#334155"),
-                title_font=dict(color="#0F172A"),
-                tickprefix="R$ ",
-                separatethousands=True,
-                gridcolor="#E2E8F0",
-                rangemode="tozero"
-            ),
-            hoverlabel=dict(
-                bgcolor="#FFFFFF",
-                font_color="#0F172A"
-            )
-        )
+        fig_linha.update_layout(**layout_dark)
 
-        st.plotly_chart(
-            grafico_mensal,
-            use_container_width=True,
-            key="grafico_mensal"
-        )
+        st.plotly_chart(fig_linha, use_container_width=True, key="fig_linha")
 
 
-    # ===== TABELA DE VENDAS =====
+    # ===== TABELA DE DETALHAMENTO DE VENDAS =====
 
     st.divider()
     st.subheader("Detalhamento das vendas")
 
+    df_exibicao = vendas_filtradas.drop(columns=["mes"], errors="ignore")
+
     st.dataframe(
-        vendas_filtradas.drop(columns=["mes"], errors="ignore"),
+        df_exibicao,
         use_container_width=True,
         hide_index=True,
         column_config={
             "data": st.column_config.DateColumn(
                 "Data",
                 format="DD/MM/YYYY"
+            ),
+            "produto": st.column_config.TextColumn(
+                "Produto"
+            ),
+            "categoria": st.column_config.TextColumn(
+                "Categoria"
+            ),
+            "quantidade": st.column_config.NumberColumn(
+                "Quantidade",
+                format="%d"
             ),
             "preco_unitario": st.column_config.NumberColumn(
                 "Preço unitário",
@@ -434,6 +480,4 @@ else:
         }
     )
 
-    st.caption(
-        f"Exibindo {quantidade_vendas} registros após os filtros."
-    )
+    st.caption(f"Exibindo {len(vendas_filtradas)} registros após a aplicação dos filtros.")
